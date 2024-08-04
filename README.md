@@ -11,7 +11,7 @@ Detailed comments: Explanations for code clarity and understanding. [NOT SO MUCH
 ## Getting Started:
 Clone the repository:
 Bash
-git clone https://github.com/inventwithdean/CUDA_MLP.git
+`git clone https://github.com/inventwithdean/CUDA_MLP.git`
 Use code with caution.
 
 Set up CUDA environment: Ensure you have a CUDA-capable GPU and the necessary CUDA toolkit installed.
