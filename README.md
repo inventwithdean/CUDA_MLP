@@ -35,11 +35,13 @@ Feel free to contribute to this project by:
 * Suggesting new features
 * Improving the code
 * Writing documentation
-## License:
-[TODO: LICENCE]
+
 
 ### Disclaimer: This project is for educational purposes and may not be optimized for production use.
 
 Let's dive into the world of deep learning together!
 
 [TODO: GIF or image related to neural networks or GPU computing]
+
+### License:
+MIT
