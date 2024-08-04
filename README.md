@@ -12,7 +12,6 @@ Detailed comments: Explanations for code clarity and understanding. [NOT SO MUCH
 * Clone the repository:
 Bash
 `git clone https://github.com/inventwithdean/CUDA_MLP.git`
-Use code with caution.
 
 * Set up CUDA environment: Ensure you have a CUDA-capable GPU and the necessary CUDA toolkit installed.
 * Compile the code: Use a CUDA-compatible compiler to build the project.
@@ -39,7 +38,7 @@ Feel free to contribute to this project by:
 ## License:
 [TODO: LICENCE]
 
-Disclaimer: This project is for educational purposes and may not be optimized for production use.
+### Disclaimer: This project is for educational purposes and may not be optimized for production use.
 
 Let's dive into the world of deep learning together!
 
