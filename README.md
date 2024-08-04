@@ -17,10 +17,10 @@ Bash
 * Compile the code: Use a CUDA-compatible compiler to build the project.
 * Run the executable: Execute the generated binary to run the MLP.
 ## Structure:
-
-include: Header files for classes and functions.
-src: Source code for the MLP implementation.
-kernels: CUDA kernels for GPU acceleration.
+Will be of this form soon
+* include: Header files for classes and functions.
+* src: Source code for the MLP implementation.
+* kernels: CUDA kernels for GPU acceleration.
 ## Future Improvements:
 
 * Implement the backward pass and backpropagation algorithm.
