@@ -1,7 +1,6 @@
 This repository contains a pure CUDA C++ implementation of a Multilayer Perceptron (MLP) neural network. By building from the ground up, we gain a deep understanding of the inner workings of neural networks and the performance benefits of GPU acceleration.
 
-### Note: 
-* This project currently focuses on the forward pass. The backward pass and optimization are under development.
+#### Note: This project currently focuses on the forward pass. The backward pass and optimization are under development.
   
 ## Disclaimer: 
 * This project is for educational purposes and may not be optimized for production use.
