@@ -39,7 +39,7 @@ Feel free to contribute to this project by:
 * 
 Let's dive into the world of deep learning together!
 
-[TODO: GIF or image related to neural networks or GPU computing]
+![power](https://github.com/user-attachments/assets/c2c4428f-ae5c-4970-b707-4b856feef508)
 
 ## License:
 MIT
