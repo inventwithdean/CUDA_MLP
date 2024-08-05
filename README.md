@@ -38,7 +38,7 @@ Feel free to contribute to this project by:
 * Suggesting new features
 * Improving the code
 * Writing documentation
-* 
+  
 Let's dive into the world of deep learning together!
 
 
