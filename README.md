@@ -20,10 +20,8 @@ Bash
 * Compile the code: Use a CUDA-compatible compiler to build the project.
 * Run the executable: Execute the generated binary to run the MLP.
 ## Structure:
-Will be of this form soon
-* include: Header files for classes and functions.
-* src: Source code for the MLP implementation.
-* kernels: CUDA kernels for GPU acceleration.
+* include: Header files for classes and functions along with kernels for Matrix multiplication and Transposes.
+* main.cu: Main file where dataset is loaded and Optimization loop happens
 ## Future Improvements:
 
 * Implement the backward pass of different layers including ReLU and Softmax.
