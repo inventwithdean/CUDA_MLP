@@ -1,10 +1,9 @@
 #include "relu.h"
 
-ReLU::ReLU(int M, int N) : M(M), N(N)
+ReLU::ReLU()
 {
-    size_t input_size = M * N * sizeof(float); // Same as output_size
-    cudaMallocManaged(&output, input_size);
-    cudaMallocManaged(&input, input_size);
+    input = nullptr;
+    output = nullptr;
 }
 
 __global__ void ReLU_kernel(float *input, float *output, int M, int N)
@@ -29,26 +28,35 @@ __global__ void ReLU_backwards_kernel(float *input, float *grads, int M, int N)
     }
 }
 
-float *ReLU::forward(float *input)
+Matrix *ReLU::forward(Matrix *input)
 {
-    cudaMemcpy(this->input, input, M * N * sizeof(float), cudaMemcpyHostToDevice);
+
+    this->input = input;
+    int M = input->rows;
+    int N = input->cols;
+    if (output == nullptr)
+    {
+        output = new Matrix(M, N);
+    }
     dim3 threadSize(16, 16);
     dim3 blockSize(N > 16 ? ceil(float(N)) : 1, M > 16 ? ceil(float(M)) : 1);
-    ReLU_kernel<<<blockSize, threadSize>>>(input, output, M, N);
+    ReLU_kernel<<<blockSize, threadSize>>>(input->mat, output->mat, M, N);
     cudaDeviceSynchronize();
     return output;
 }
 
-void ReLU::backward(float *grads)
+void ReLU::backward(Matrix *grads)
 {
+    int M = grads->rows;
+    int N = grads->cols;
     dim3 threadSize(16, 16);
     dim3 blockSize(N > 16 ? ceil(float(N)) : 1, M > 16 ? ceil(float(M)) : 1);
-    ReLU_backwards_kernel<<<blockSize, threadSize>>>(input, grads, M, N);
-    ;
+    ReLU_backwards_kernel<<<blockSize, threadSize>>>(input->mat, grads->mat, M, N);
+    cudaDeviceSynchronize();
 }
 
 ReLU::~ReLU()
 {
-    cudaFree(input);
-    cudaFree(output);
+    delete (input);
+    delete (output);
 }

@@ -11,25 +11,31 @@ Matrix::Matrix(int rows, int cols) : rows(rows), cols(cols)
     FillRandom();
 }
 
-Matrix *Matrix::dot(Matrix *other)
+void Matrix::dot(Matrix *other, Matrix *out)
 {
     // This multiplied by mat
-    size_t out_rows = rows;
     size_t out_cols = other->cols;
-    Matrix *out = new Matrix(out_rows, out_cols);
     matmul(this->mat, other->mat, out->mat, rows, cols, out_cols);
-    return out;
 }
 
-Matrix *Matrix::add(Matrix *other)
+void Matrix::add(Matrix *other, Matrix *out)
 {
     // Currently, only supports axis 0 broadcasting!
     // In the form of weights(M, N) + biases (1, N)
     size_t out_rows = rows;
     size_t out_cols = cols;
-    Matrix *out = new Matrix(rows, cols);
     mat_add_broadcasted(mat, other->mat, out->mat, out_rows, out_cols);
-    return out;
+}
+
+// Returns transpose of the Matrix
+void Matrix::transpose(Matrix *out)
+{
+    transpose_matrix(this, out);
+}
+
+void Matrix::sum(Matrix *out, int axis)
+{
+    mat_axis_sum(this, out, 0);
 }
 
 void Matrix::print()
@@ -54,7 +60,7 @@ void Matrix::FillRandom()
         for (int j = 0; j < cols; j++)
         {
             int idx = i * cols + j;
-            mat[idx] = (float)rand() / (float)(RAND_MAX / 5);
+            mat[idx] = (float)rand() / (float)(RAND_MAX / 1);
         }
     }
 }

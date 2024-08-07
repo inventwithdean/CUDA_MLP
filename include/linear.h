@@ -1,18 +1,17 @@
 #ifndef LINEAR_H
 #define LINEAR_H
 
-#include "matmul.h"
-#include "mat_axis_sum.h"
-#include "mat_transpose.h"
 #include "stdio.h"
 #include "weight_update.h"
-#include "mat_add.h"
 #include "matrix.h"
 #include "cuda_runtime.h"
 
 class Linear
 {
 private:
+    size_t input_dim;
+    size_t output_dim;
+
 public:
     Matrix *output;
     Matrix *input;
@@ -23,7 +22,7 @@ public:
     Matrix *grad_inputs;
 
 public:
-    Linear(int input_dim, int output_dim);
+    Linear(size_t input_dim, size_t output_dim);
     Matrix *Linear::forward(Matrix *input);
     void Linear::backward(Matrix *grad);
     void update_weights(float lr);

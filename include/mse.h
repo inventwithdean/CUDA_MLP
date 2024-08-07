@@ -1,8 +1,6 @@
 #ifndef MSE_H
 #define MSE_H
 #include "cuda_runtime.h"
-#include "math.h"
-#include "stdio.h"
 #include "matrix.h"
 
 class MeanSquaredError

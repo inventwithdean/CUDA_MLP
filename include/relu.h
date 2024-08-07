@@ -4,19 +4,18 @@
 
 #include "cuda_runtime.h"
 #include "math.h"
+#include "matrix.h"
+
 class ReLU
 {
 private:
-    float *input;
-    float *output;
-    // M BY N MATRIX
-    int M;
-    int N;
+    Matrix *input;
+    Matrix *output;
 
 public:
-    ReLU(int input_dim, int output_dim);
-    float *forward(float *input);
-    void backward(float *grads);
+    ReLU();
+    Matrix *forward(Matrix *input);
+    void backward(Matrix *grads);
     ~ReLU();
 };
 
