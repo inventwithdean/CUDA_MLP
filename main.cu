@@ -1,47 +1,63 @@
 #include "stdio.h"
 #include "include/linear.h"
 #include "include/mse.h"
+#include "include/relu.h"
+#include "dataset_loader.h"
 
+// FIX MEMORY LEAKS! Currently, pretty much everything is leaking!
 int main()
 {
     srand(1337);
+    size_t batch_size = 256 * 3;
+    Dataset dataset = Dataset(batch_size);
+    Matrix *input = dataset.get_inputs();
+    Matrix *targets = dataset.get_targets();
 
-    Matrix *input = new Matrix(128, 1);
-    Matrix *targets = new Matrix(128, 1);
-    // Testing on {x * 5 - 15 : x belongs to 0 to 4}
-    for (int i = 0; i < 128; i++)
-    {
-        input->mat[i] = (float)i;
-        targets->mat[i] = (float)i * 5 - 15;
-    }
+    // Multilayer Perceptron
+    Linear linear1 = Linear(5, 8);
+    ReLU relu1 = ReLU();
+    Linear linear2 = Linear(8, 16);
+    ReLU relu2 = ReLU();
+    Linear linear3 = Linear(16, 32);
+    ReLU relu3 = ReLU();
+    Linear linear4 = Linear(32, 1);
 
-    printf("Initial Parameters: \n");
-    Linear linear = Linear(1, 1);
-    MeanSquaredError mse = MeanSquaredError(4);
-
+    MeanSquaredError mse = MeanSquaredError(batch_size);
+    float learning_rate = 0.1;
     // Optimization Loop
-    for (int i = 0; i < 200; i++)
+    for (int i = 0; i < 100; i++)
     {
-        Matrix *out = linear.forward(input);
+        Matrix *out = linear1.forward(input);
+        out = relu1.forward(out);
+        out = linear2.forward(out);
+        out = relu2.forward(out);
+        out = linear3.forward(out);
+        out = relu3.forward(out);
+        out = linear4.forward(out);
 
         mse.CalculateGradients(out, targets);
         float loss = mse.CalculateLoss(out, targets);
-        if (i % 10 == 0)
-            printf("Loss: %.2f\n", loss);
+        printf("Loss: %.2f\n", loss);
 
-        linear.backward(mse.mse_grads);
-        linear.update_weights(0.1);
+        // linear2.backward(mse.mse_grads);
+        linear4.backward(mse.mse_grads);
 
-        // Deleting the Matrices
-        delete out;
+        relu3.backward(linear4.grad_inputs);
+        linear3.backward(linear4.grad_inputs);
+
+        relu2.backward(linear3.grad_inputs);
+        linear2.backward(linear3.grad_inputs);
+
+        relu1.backward(linear2.grad_inputs);
+        linear1.backward(linear2.grad_inputs);
+
+        linear4.update_weights(learning_rate);
+        linear3.update_weights(learning_rate);
+        linear2.update_weights(learning_rate);
+        linear1.update_weights(learning_rate);
     }
-
-    printf("Trained Parameters: \n");
-    linear.weights->print();
-    linear.biases->print();
 
     delete input;
     delete targets;
-    printf("No Errors yay!\n");
     return 0;
 }
