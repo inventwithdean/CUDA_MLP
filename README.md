@@ -7,10 +7,10 @@ This repository contains a pure CUDA C++ implementation of a Multilayer Perceptr
 
 ## Features:
 
-Pure CUDA C++ implementation: No external libraries or frameworks.
-GPU acceleration: Leverage the power of GPUs for high performance.
-Modular design: Clear separation of concerns for maintainability.
-Detailed comments: Explanations for code clarity and understanding.
+* Pure CUDA C++ implementation: No external libraries or frameworks.
+* GPU acceleration: Leverage the power of GPUs for high performance.
+* Modular design: Clear separation of concerns for maintainability.
+  
 ## Getting Started:
 * Clone the repository:
 Bash
