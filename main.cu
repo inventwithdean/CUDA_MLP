@@ -1,74 +1,47 @@
-#include "include/linear.h"
-#include "include/relu.h"
-#include "include/mse.h"
-#include "include/weight_update.h"
 #include "stdio.h"
-#include "cuda_runtime.h"
-#include "helper.h"
+#include "include/linear.h"
+#include "include/mse.h"
 
 int main()
 {
-    size_t batch_size = 8;
-    size_t input_dim = 1;
-    size_t output_dim = 1;
+    srand(1337);
 
-    float *input;
-    float *targets;
-    cudaError_t err;
-
-    // Calculating sizes of input and target matrices
-    size_t input_size = batch_size * input_dim * sizeof(float);
-    size_t target_size = batch_size * sizeof(float);
-
-    // Initializing Memory for Inputs
-    err = cudaMallocManaged(&input, input_size);
-    if (err != cudaSuccess)
+    Matrix *input = new Matrix(128, 1);
+    Matrix *targets = new Matrix(128, 1);
+    // Testing on {x * 5 - 15 : x belongs to 0 to 4}
+    for (int i = 0; i < 128; i++)
     {
-        printf("cudaMallocManaged Failed: %s\n", cudaGetErrorString(err));
-    }
-    // Initializing Memory for Targets
-    err = cudaMallocManaged(&targets, target_size);
-    if (err != cudaSuccess)
-    {
-        printf("cudaMallocManaged Failed: %s\n", cudaGetErrorString(err));
+        input->mat[i] = (float)i;
+        targets->mat[i] = (float)i * 5 - 15;
     }
 
-    // Initializing input and targets to Linear Function
-    for (int i = 0; i < batch_size; i++)
-    {
-        input[i] = i;
-        targets[i] = -i;
-    };
-
-    Linear linear = Linear(input_dim, output_dim, batch_size); // 4 by 8 -> 4 by 4
-
-    MeanSquaredError mse = MeanSquaredError(batch_size);
+    printf("Initial Parameters: \n");
+    Linear linear = Linear(1, 1);
+    MeanSquaredError mse = MeanSquaredError(4);
 
     // Optimization Loop
-    // print statements are for debugging purposes
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 200; i++)
     {
-        // printf("Linear Layer Weights\n");
-        // printMatrix(linear.weights, input_dim, output_dim);
-        float *out = linear.forward(input);
-        // printf("Linear Layer Output\n");
-        // printMatrix(out, batch_size, output_dim);
+        Matrix *out = linear.forward(input);
+
+        mse.CalculateGradients(out, targets);
         float loss = mse.CalculateLoss(out, targets);
-        printf("Loss | %dth iteration: %.2f\n", i + 1, loss);
-        float *grads = mse.CalculateGradients(out, targets);
-        // printf("MSE Gradient\n");
-        // printMatrix(grads, batch_size, output_dim);
-        linear.backward(grads);
-        // printf("Linear Layer Gradient\n");
-        // printMatrix(linear.grad_weights, input_dim, output_dim);
-        update_weights(linear.weights, linear.grad_weights, input_dim, output_dim, 0.1);
-        // printf("Linear Layer Weights\n");
-        // printMatrix(linear.weights, input_dim, output_dim);
-        // if (i == 3)
-        //     break;
+        if (i % 10 == 0)
+            printf("Loss: %.2f\n", loss);
+
+        linear.backward(mse.mse_grads);
+        linear.update_weights(0.1);
+
+        // Deleting the Matrices
+        delete out;
     }
 
-    cudaFree(input);
-    cudaFree(targets);
+    printf("Trained Parameters: \n");
+    linear.weights->print();
+    linear.biases->print();
+
+    delete input;
+    delete targets;
+    printf("No Errors yay!\n");
     return 0;
 }
