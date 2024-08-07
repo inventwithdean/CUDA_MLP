@@ -1,4 +1,4 @@
-This repository contains a pure CUDA C++ implementation of a Multilayer Perceptron (MLP) neural network with a Linear Regression Dataset with Apache 2 license on which the bnetwork attained a loss of 0.07. By building from the ground up, we gain a deep understanding of the inner workings of neural networks and the performance benefits of GPU acceleration.
+This repository contains a pure CUDA C++ implementation of a Multilayer Perceptron (MLP) neural network with a Linear Regression Dataset with Apache 2 license on which the network attained a loss of 0.07. By building from the ground up, we gain a deep understanding of the inner workings of neural networks and the performance benefits of GPU acceleration.
 
 ## Disclaimer: 
 * This project is for educational purposes and may not be optimized for production use.
