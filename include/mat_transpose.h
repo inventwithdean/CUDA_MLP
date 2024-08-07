@@ -2,7 +2,7 @@
 
 #define MATT_H
 #include "cuda_runtime.h"
-#include "stdio.h"
-float *mat_transpose(float *matrix, int M, int N);
+#include "matrix.h"
+Matrix *mat_transpose(Matrix *mat);
 
 #endif

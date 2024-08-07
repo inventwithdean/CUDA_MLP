@@ -10,19 +10,14 @@ __global__ void mat_transpose_kernel(float *matrix, float *transposed_matrix, in
     }
 }
 
-float *mat_transpose(float *matrix, int M, int N)
+Matrix *mat_transpose(Matrix *mat)
 {
-    size_t size_mat = M * N * sizeof(float);
-    float *transposed_mat;
-    cudaError_t err;
-    err = cudaMallocManaged(&transposed_mat, size_mat);
-    if (err != cudaSuccess)
-    {
-        printf("cudaMallocManaged Failed: %s\n", cudaGetErrorString(err));
-    }
+    int rows = mat->rows;
+    int cols = mat->cols;
+    Matrix *transposed_mat = new Matrix(cols, rows);
     dim3 numThreads(16, 16);
-    dim3 numBlocks(N > 16 ? ceil(float(N) / 16) : 1, M > 16 ? ceil(float(M) / 16) : 1);
-    mat_transpose_kernel<<<numThreads, numBlocks>>>(matrix, transposed_mat, M, N);
+    dim3 numBlocks(cols > 16 ? ceil(float(cols) / 16) : 1, rows > 16 ? ceil(float(rows) / 16) : 1);
+    mat_transpose_kernel<<<numThreads, numBlocks>>>(mat->mat, transposed_mat->mat, rows, cols);
     cudaDeviceSynchronize();
     return transposed_mat;
 }

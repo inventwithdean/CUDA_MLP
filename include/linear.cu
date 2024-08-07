@@ -1,69 +1,39 @@
 #include "linear.h"
 
-Linear::Linear(int input_dim, int output_dim, int batch_size, bool bias) : input_dim(input_dim), output_dim(output_dim), batch_size(batch_size), bias(bias)
+Linear::Linear(int input_dim, int output_dim)
 {
-    // Currently, bias is not supported!
-    // Only floats are supported
-    size_t weight_size = input_dim * output_dim * sizeof(float);
-    cudaError_t err;
-    // Allocating Memory for Weight Matrix
-    err = cudaMallocManaged(&weights, weight_size);
-    if (err != cudaSuccess)
-    {
-        printf("cudaMallocManaged Failed: %s", cudaGetErrorString(err));
-    }
-    // Allocating Memory for Weight Gradients
-    err = cudaMallocManaged(&grad_weights, weight_size);
-    if (err != cudaSuccess)
-    {
-        printf("cudaMallocManaged Failed: %s", cudaGetErrorString(err));
-    }
-    // Allocating Memory for Input Cache
-    size_t input_size = input_dim * batch_size * sizeof(float);
-    err = cudaMallocManaged(&input, input_size);
-    if (err != cudaSuccess)
-    {
-        printf("cudaMallocManaged Failed: %s", cudaGetErrorString(err));
-    }
-    // Allocating Memory for Output Matrix
-    size_t output_size = batch_size * output_dim * sizeof(float);
-    err = cudaMallocManaged(&output, output_size);
-    if (err != cudaSuccess)
-    {
-        printf("cudaMallocManaged Failed: %s", cudaGetErrorString(err));
-    }
-
-    // Initializing weights with random Values
-    for (int i = 0; i < input_dim; i++)
-    {
-        for (int j = 0; j < output_dim; j++)
-        {
-            weights[i * output_dim + j] = rand() % 5;
-        }
-    }
+    weights = new Matrix(input_dim, output_dim);
+    biases = new Matrix(1, output_dim);
 }
 
-float *Linear::forward(float *input)
+Matrix *Linear::forward(Matrix *input)
 {
-    size_t sizecpy = input_dim * batch_size * sizeof(float);
-    cudaMemcpy(this->input, input, sizecpy, cudaMemcpyHostToDevice);
-    matmul(input, weights, output, batch_size, input_dim, output_dim);
-    return this->output;
+    this->input = input;
+    output = input->dot(weights);
+    output = output->add(biases);
+    return output;
 }
 
-void Linear::backward(float *grad)
+void Linear::backward(Matrix *grads)
 {
-    // Grad Shape -> Out Shape (batch_size, output_dim)
-    float *transposed_mat = mat_transpose(input, batch_size, input_dim); // DON'T FORGET TO FREE THIS transposed_mat
-    // Multiply grad by input's transpose
-    matmul(transposed_mat, grad, grad_weights, input_dim, batch_size, output_dim);
-    cudaFree(transposed_mat);
+    grad_weights = (mat_transpose(input))->dot(grads);
+    grad_inputs = (grads)->dot(mat_transpose(weights));
+    grad_biases = mat_axis_sum(grads, 0);
+}
+
+void Linear::update_weights(float lr)
+{
+    update_parameters(weights, grad_weights, lr);
+    update_parameters(biases, grad_biases, lr);
 }
 
 Linear::~Linear()
 {
-    cudaFree(weights);
-    cudaFree(grad_weights);
-    cudaFree(output);
-    cudaFree(input);
+    delete (weights);
+    delete (biases);
+    delete (input);
+    delete (output);
+    delete (grad_weights);
+    delete (grad_biases);
+    delete (grad_inputs);
 }

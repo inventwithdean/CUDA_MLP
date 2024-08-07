@@ -3,17 +3,19 @@
 #include "cuda_runtime.h"
 #include "math.h"
 #include "stdio.h"
+#include "matrix.h"
+
 class MeanSquaredError
 {
 private:
     int batch_size;
-    float *grads;
 
 public:
+    Matrix *mse_grads;
     MeanSquaredError(int batch_size);
     ~MeanSquaredError();
-    float *CalculateGradients(float *outputs, float *targets);
-    float CalculateLoss(float *outputs, float *targets);
+    Matrix *CalculateGradients(Matrix *output_matrix, Matrix *target_matrix);
+    float CalculateLoss(Matrix *output_matrix, Matrix *target_matrix);
 };
 
 #endif

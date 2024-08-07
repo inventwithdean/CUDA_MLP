@@ -2,9 +2,7 @@
 
 MeanSquaredError::MeanSquaredError(int batch_size) : batch_size(batch_size)
 {
-    size_t size_grads = batch_size * sizeof(float);
-
-    cudaMallocManaged(&grads, size_grads);
+    mse_grads = new Matrix(batch_size, 1);
 }
 
 __global__ void MSE_kernel(float *outputs, float *targets, float *grads, int N)
@@ -16,19 +14,22 @@ __global__ void MSE_kernel(float *outputs, float *targets, float *grads, int N)
     }
 }
 
-float *MeanSquaredError::CalculateGradients(float *outputs, float *targets)
+Matrix *MeanSquaredError::CalculateGradients(Matrix *output_matrix, Matrix *target_matrix)
 {
+    float *outputs = output_matrix->mat;
+    float *targets = target_matrix->mat;
     dim3 threadSize(256);
     dim3 numBlocks(ceil(float(batch_size) / 256));
-    MSE_kernel<<<threadSize, numBlocks>>>(outputs, targets, grads, batch_size);
+    MSE_kernel<<<threadSize, numBlocks>>>(outputs, targets, mse_grads->mat, batch_size);
     cudaDeviceSynchronize();
-    return grads;
+    return mse_grads;
 }
 
 // CURRENTY RUNS ON CPU
-float MeanSquaredError::CalculateLoss(float *outputs, float *targets)
+float MeanSquaredError::CalculateLoss(Matrix *output_matrix, Matrix *target_matrix)
 {
-
+    float *outputs = output_matrix->mat;
+    float *targets = target_matrix->mat;
     float loss = 0;
     for (int i = 0; i < batch_size; i++)
     {
@@ -41,5 +42,5 @@ float MeanSquaredError::CalculateLoss(float *outputs, float *targets)
 
 MeanSquaredError::~MeanSquaredError()
 {
-    cudaFree(grads);
+    delete (mse_grads);
 }
